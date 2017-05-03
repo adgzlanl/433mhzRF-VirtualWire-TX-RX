@@ -3,11 +3,15 @@
 
 /* Digital IO pin that will be used for sending data to the transmitter */
 const int TX_DIO_Pin = 2;
-
+int pushButton = A2;
 
 void setup()
 {
   pinMode(13, OUTPUT);
+  pinMode(12, OUTPUT);
+  digitalWrite(12,HIGH);
+  /* Initialises the PushButton pin*/
+  pinMode(pushButton, INPUT);
   /* Initialises the DIO pin used to send data to the Tx module */
   vw_set_tx_pin(TX_DIO_Pin);
   /* Set the transmit logic level (LOW = transmit for this
@@ -26,8 +30,10 @@ void loop()
   unsigned int Data2;
   /* The transmit buffer that will hold the data to be
      transmitted. */
-  byte TxBuffer[4];
- 
+  byte TxBuffer[5];
+
+   /* read the input pin:*/
+  int buttonState = digitalRead(pushButton);
   /* Read the analogue input A0... */
   Data = analogRead(A0);
   Data2 = analogRead(A1);
@@ -37,12 +43,12 @@ void loop()
   TxBuffer[1] = Data;
   TxBuffer[2] = Data2 >> 8;
   TxBuffer[3] = Data2;
- 
+  TxBuffer[4] = buttonState;
   /* Turn on the LED on pin 13 to indicate that we are about
     to transmit data */
   digitalWrite(13, HIGH);
   /* Send the data (2 bytes) */
-  vw_send((byte *)TxBuffer, 4);
+  vw_send((byte *)TxBuffer, 5);
   /* Wait until the data has been sent */
   vw_wait_tx();
  

@@ -1,42 +1,11 @@
-/* FILE:    MX05V_433MHZ_MODULE_HCMODU0007_RECEIVE_EXAMPLE.pde
-   DATE:    03/03/13
-   VERSION: 0.1
-   AUTHOR:  Andrew Davies
-
-This is an example of how to use the 433MHz wireless reciever module
-(HCMODU0007) which is the Rx part of the tranmitter and reciver module pair.
-This example makes use of the VirtualWire library written by Mike McCauley.
-This sketch in intended to be used with the Tx example code to recive analogue
-input data sent from the transmitting Arduino. The received data is then output
-to the UART.
-
-Rx MODULE CONNECTIONS:
-
-PIN  DESCRIPTION      ARDUINO PIN
-1    GND              GND
-2    RX DATA          D2
-3    RX DATA          N/A
-4    VCC (5V)         VCC
-
-
-You may copy, alter and reuse this code in any way you like, but please leave
-reference to HobbyComponents.com in your comments if you redistribute this code.
-
-THIS SOFTWARE IS PROVIDED "AS IS". HOBBY COMPONENTS LTD MAKES NO WARRANTIES, WHETHER
-EXPRESS, IMPLIED OR STATUTORY, INCLUDING, BUT NOT LIMITED TO, IMPLIED WARRANTIES OF
-MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE, ACCURACY OR LACK OF NEGLIGENCE.
-HOBBY COMPONENTS SHALL NOT, IN ANY CIRCUMSTANCES, BE LIABLE FOR ANY DAMAGES,
-INCLUDING, BUT NOT LIMITED TO, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR ANY
-REASON WHATSOEVER.
-*/
-
-
 /*Include the VirtualWire library */
 #include "VirtualWire.h"
 
 /* Digital IO pin that will be used for receiving data from the receiver */
 const int RX_DIO_Pin = 12;
-
+ /*Initialize Button Status*/
+int buttonState=0;
+ 
 void setup()
 {
     pinMode(13, OUTPUT);
@@ -56,7 +25,7 @@ void setup()
 void loop()
 {
   /* Set the receive buffer size to 2 bytes */
-  uint8_t Buffer_Size = 4;
+  uint8_t Buffer_Size = 5;
  
   /* Holds the recived data */
   unsigned int Data ,Data2;
@@ -74,11 +43,14 @@ void loop()
         /* Store the received high and low byte data */
         Data = RxBuffer[0] << 8 | RxBuffer[1];
         Data2 = RxBuffer[2] << 8 | RxBuffer[3];
+        buttonState = RxBuffer[4];
         /* Output this data to the UART */
         Serial.print("Analogue pin A0: ");
         Serial.print(Data);
         Serial.print("  Analogue pin A1: ");
-        Serial.println(Data2);
+        Serial.print(Data2);
+        Serial.print("  Digital pin State: ");
+        Serial.println(buttonState);
         /* Turn off the LED on pin 13 to indicate that the
            data has now been received */
         digitalWrite(13, LOW);
